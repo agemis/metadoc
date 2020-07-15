@@ -1,0 +1,17 @@
+======================
+Mettre le code dans git !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+======================
+
+
+Passer toute ma doc pro (livres, videos, ...) dans metadoc
+
+pur le CLI: module cmd de python
+
+pour l'auto completion: 
+  - en standard: https://docs.python.org/3/library/readline.html
+  - https://python-prompt-toolkit.readthedocs.io/en/master/pages/asking_for_input.html
+
+
+
+
+  

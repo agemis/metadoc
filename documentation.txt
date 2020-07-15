@@ -1,0 +1,136 @@
+# Objectif
+
+Permettre d'associer des métadonnées à des documents (répertoire, fichier) regroupés dans un répertoire, et utiliser ces métadonnées pour la recherche de documents.
+
+# Principe de fonctionnement
+
+Le système de fichier contient toutes les informations. 
+La seule modification que metadoc effectue sur le système de fichier est l'écriture des fichiers de métadonnées
+La base de données ne sert qu'a accélérer la recherche.
+
+# Workflow
+
+1. Création d'un fichier de métadonnées par document, au même endroit que le document
+	- La "clef primaire" d'un document est son chemin
+2. Saisie des métadonnées
+3. Rafraîchissement de la base de données
+4. Utilisation de la base de données pour la recherche
+
+# Lexique
+
+- document: un fichier ou un répertoire, géré par metadoc. 
+- fichiers de métadonnées pour un répertoire:
+	- .metadoc.json: le fichier de métadonnées
+- fichiers de métadonnées pour un fichier xxx.ext1:
+	- xxx.ext1.metadoc.json: le fichier de métadonnées
+
+# Exemple
+
+Une librairie de photos, contenant deux photos, dont l'une est référencée, et l'autre non
+
+	- /photos
+		- .metadoc.json (métadonnées du répertoire racine de la librairie)
+		- photo1.jpg
+		- photo1.jpg.metadoc.json (métadonnées du fichier photo1.jpg)
+		- photo2.jpg
+
+
+
+# Metadonnées
+
+## Champ obligatoires: 
+- filepath: chemin du fichier ou répertoire, dans la librairie, géré automatiquement
+- filetype: file/directory, géré automatiquement
+- id: identifiant (uuid), géré automatiquement
+	- il y a une correspondance unique entre l'id et le path
+- title: titre, saisi
+- category: catégorie, saisi
+- doc_production_date: date de production du document, saisi (exemple, date de publication d'un livre)
+- doc_modification_date: date de dernière modification du document, géré automatiquement
+- meta_modification_date: date de dernière modification des métadonnées du document, géré automatiquement
+
+
+## Champs facultatifs
+
+Voici mon template json, qui sert à initialiser un fichier de métadonnées.
+On voit qu'il y a une liste de tags, d'auteurs, un résumé, un commentaire, un note, une liste de formats, une liste d'éditeurs, une liste de langues et une liste d'url
+
+{
+    "title": [title],
+    "category": [category],
+    "date": null,
+    "meta_modification_date": null,
+    "doc_production_date: ": null,
+	"doc_modification_date": null,
+    "tags": [
+        null
+    ],
+    "authors": [
+        null
+    ],
+    "abstract": "",
+    "comment": "",
+    "rating": 0,
+    "formats": [
+        null,
+        null
+    ],
+    "publishers": [
+        null
+    ],
+    "langages": [
+        "en"
+    ],
+    "urls": {
+        "dummy": "https://dummy"
+    }
+}
+
+
+# Organisation des fichiers
+
+L'organisation physique des fichiers est libre. Les medias amovibles ne sont pas gérés pour l'instant.
+
+# Base de données
+
+ll s'agit d'une base de données mongodb. 
+
+# Programme
+
+Il n'y a qu'un seul programme: metadoc
+Le fichier de configuration est config.py, dans le répertoire de l'exécutable
+
+## Syntaxe 
+
+	metadoc add <document_path>
+Crée le fichier de métadonnées du document <document_path>
+
+	metadoc edit <document_path>
+Edite le fichier de métadonnées du document <document_path>, avec un editeur json. S'il n'existe pas, le crée 
+
+	metadoc remove <document_path>
+Supprime le fichier de métadonnées du document <document_path>
+
+	metadoc refreshdb
+Reporte les modifications des métadonnées et des répertoires/fichiers dans la base de données
+
+- Si un document existe en base et pas sur le système de fichier -> suppression en base
+- Si un document existe sur le système de fichier et pas en base -> ajout en base
+- Si un document existe sur le système de fichier et en base -> comparaison (dates de dernières modification) et mise à jour en base si nécessaire.
+
+	metadoc check
+Vérifie les fichiers de métadonnées:
+- Si le fichier associé n'existe pas, supprime le fichier de métadonnées
+- Si un fichier de métadonnées contient un json incorrect, le signale
+
+
+
+ 
+
+
+
+
+
+
+
+
